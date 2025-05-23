@@ -1,0 +1,42 @@
+name: Go Benchmark Tests
+
+on:
+  push:
+    branches: [ main ] # Assuming 'main' is the default branch
+  pull_request:
+    branches: [ main ] # Assuming 'main' is the default branch
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.22' # Specify a recent stable Go version
+
+    - name: Tidy modules
+      run: go mod tidy
+
+    - name: Run Godog Benchmark Tests
+      run: go test ./internal/test/benchmarks/... -v
+
+    - name: Run Godog Benchmark Tests with JSON output (optional example)
+      if: success() # Only run if previous steps succeed, can be made conditional
+      env:
+        BENCHMARK_RESULTS_DIR: ${{ github.workspace }}/results
+      run: |
+        mkdir -p ${{ github.workspace }}/results
+        go test ./internal/test/benchmarks/... -v
+    
+    - name: Upload Benchmark Results (optional example)
+      if: success() && env.BENCHMARK_RESULTS_DIR != ''
+      uses: actions/upload-artifact@v4
+      with:
+        name: cucumber-results
+        path: ${{ github.workspace }}/results/cucumber.json
+        retention-days: 7
