@@ -17,3 +17,13 @@ Then I should see that everything on that checklist holds true
 
 > story: iterative development
 > drawback: lack of lower level performance tests
+
+## Running Tests
+
+To run the tests, use the following command from the project root:
+
+go test ./internal/test/benchmarks/... -v
+
+To get cucumber JSON output, set the `BENCHMARK_RESULTS_DIR` environment variable:
+
+BENCHMARK_RESULTS_DIR=/tmp/results go test ./internal/test/benchmarks/... -v
